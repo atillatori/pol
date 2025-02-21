@@ -17,6 +17,7 @@
         const donateButton = document.getElementById('donateButton');
         const amountInput = document.getElementById('amount');
 
+        // MetaMask bağlantısını kur
         connectButton.addEventListener('click', async () => {
             if (typeof window.ethereum !== 'undefined') {
                 try {
@@ -35,6 +36,16 @@
             }
         });
 
+        // Tutar girildiğinde butonu etkinleştir
+        amountInput.addEventListener('input', () => {
+            if (amountInput.value > 0) {
+                donateButton.disabled = false; // Butonu etkinleştir
+            } else {
+                donateButton.disabled = true; // Butonu devre dışı bırak
+            }
+        });
+
+        // Bağış yap butonuna tıklandığında
         donateButton.addEventListener('click', async () => {
             if (typeof window.ethereum !== 'undefined') {
                 const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
