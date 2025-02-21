@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate POL</title>
+</head>
+<body>
+    <h1>Donate POL</h1>
+    <button id="connectButton">Connect MetaMask</button>
+    <input type="number" id="amount" placeholder="Enter amount in POL" step="0.01">
+    <button id="donateButton" disabled>Donate</button>
+
+    <script>
+        const connectButton = document.getElementById('connectButton');
+        const donateButton = document.getElementById('donateButton');
+        const amountInput = document.getElementById('amount');
+
+        connectButton.addEventListener('click', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    // MetaMask bağlantısını iste
+                    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                    console.log('Connected:', accounts[0]);
+                    alert('Connected to MetaMask!');
+                    donateButton.disabled = false; // Bağış butonunu etkinleştir
+                } catch (error) {
+                    console.error('User denied account access:', error);
+                    alert('Please connect your MetaMask wallet to continue.');
+                }
+            } else {
+                alert('Please install MetaMask to use this feature!');
+                window.open('https://metamask.io/download.html', '_blank');
+            }
+        });
+
+        donateButton.addEventListener('click', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                const userAddress = accounts[0];
+
+                // Kullanıcının girdiği tutarı al (POL cinsinden)
+                const amountInPOL = amountInput.value;
+                if (!amountInPOL || amountInPOL <= 0) {
+                    alert("Please enter a valid amount!");
+                    return;
+                }
+
+                // POL'ü wei'ye çevir (1 POL = 10^18 wei)
+                const amountInWei = ethers.utils.parseEther(amountInPOL);
+
+                // Sözleşme adresi
+                const contractAddress = '0x5a11C289C1Db26F16956BC2Ea5C229adae813645'; // Sözleşme adresinizi buraya ekleyin
+
+                // İşlem parametreleri
+                const transactionParameters = {
+                    to: contractAddress, // Sözleşme adresi
+                    from: userAddress, // Kullanıcının adresi
+                    value: amountInWei.toHexString(), // Gönderilecek tutar (wei cinsinden)
+                };
+
+                try {
+                    // MetaMask üzerinden işlemi gönder
+                    const txHash = await ethereum.request({
+                        method: 'eth_sendTransaction',
+                        params: [transactionParameters],
+                    });
+                    console.log('Transaction Hash:', txHash);
+                    alert('Donation successful! Transaction Hash: ' + txHash);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Donation failed: ' + error.message);
+                }
+            } else {
+                alert('Please install MetaMask!');
+            }
+        });
+    </script>
+</body>
+</html>
