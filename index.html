@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donate POL</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
 </head>
 <body>
     <h1>Donate POL</h1>
@@ -29,7 +30,7 @@
                     alert('Please connect your MetaMask wallet to continue.');
                 }
             } else {
-                alert('Please install MetaMask to use this feature!');
+                alert('Please install MetaMask!');
                 window.open('https://metamask.io/download.html', '_blank');
             }
         });
@@ -50,7 +51,7 @@
                 const amountInWei = ethers.utils.parseEther(amountInPOL);
 
                 // Sözleşme adresi
-                const contractAddress = '0x5a11C289C1Db26F16956BC2Ea5C229adae813645'; // Sözleşme adresinizi buraya ekleyin
+                const contractAddress = '0x5a11C289C1Db26F16956BC2Ea5C229adae813645'; // Sözleşme adresiniz
 
                 // İşlem parametreleri
                 const transactionParameters = {
