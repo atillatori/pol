@@ -1,63 +1,81 @@
-const connectButton = document.getElementById('connectButton');
-const donateButton = document.getElementById('donateButton');
-const amountInput = document.getElementById('amount');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate MATIC</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+</head>
+<body>
+    <h1>Donate MATIC</h1>
+    <button id="connectButton">Connect MetaMask</button>
+    <input type="number" id="amount" placeholder="Enter amount in MATIC" step="0.01">
+    <button id="donateButton" disabled>Donate</button>
 
-connectButton.addEventListener('click', async () => {
-    if (typeof window.ethereum !== 'undefined') {
-        try {
-            // MetaMask bağlantısını iste
-            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-            console.log('Connected:', accounts[0]);
-            alert('Connected to MetaMask!');
-            donateButton.disabled = false; // Bağış butonunu etkinleştir
-        } catch (error) {
-            console.error('User denied account access:', error);
-            alert('Please connect your MetaMask wallet to continue.');
-        }
-    } else {
-        alert('Please install MetaMask!');
-        window.open('https://metamask.io/download.html', '_blank');
-    }
-});
+    <script>
+        const connectButton = document.getElementById('connectButton');
+        const donateButton = document.getElementById('donateButton');
+        const amountInput = document.getElementById('amount');
 
-donateButton.addEventListener('click', async () => {
-    if (typeof window.ethereum !== 'undefined') {
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        const userAddress = accounts[0];
+        connectButton.addEventListener('click', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    // MetaMask bağlantısını iste
+                    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                    console.log('Connected:', accounts[0]);
+                    alert('Connected to MetaMask!');
+                    donateButton.disabled = false; // Bağış butonunu etkinleştir
+                } catch (error) {
+                    console.error('User denied account access:', error);
+                    alert('Please connect your MetaMask wallet to continue.');
+                }
+            } else {
+                alert('Please install MetaMask!');
+                window.open('https://metamask.io/download.html', '_blank');
+            }
+        });
 
-        // Kullanıcının girdiği tutarı al (MATIC cinsinden)
-        const amountInMATIC = amountInput.value;
-        if (!amountInMATIC || amountInMATIC <= 0) {
-            alert("Please enter a valid amount!");
-            return;
-        }
+        donateButton.addEventListener('click', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                const userAddress = accounts[0];
 
-        // MATIC'i wei'ye çevir (1 MATIC = 10^18 wei)
-        const amountInWei = ethers.utils.parseEther(amountInMATIC);
+                // Kullanıcının girdiği tutarı al (MATIC cinsinden)
+                const amountInMATIC = amountInput.value;
+                if (!amountInMATIC || amountInMATIC <= 0) {
+                    alert("Please enter a valid amount!");
+                    return;
+                }
 
-        // Sözleşme adresi
-        const contractAddress = '0x5a11C289C1Db26F16956BC2Ea5C229adae813645'; // Sözleşme adresiniz
+                // MATIC'i wei'ye çevir (1 MATIC = 10^18 wei)
+                const amountInWei = ethers.utils.parseEther(amountInMATIC);
 
-        // İşlem parametreleri
-        const transactionParameters = {
-            to: contractAddress, // Sözleşme adresi
-            from: userAddress, // Kullanıcının adresi
-            value: amountInWei.toHexString(), // Gönderilecek tutar (wei cinsinden)
-        };
+                // Sözleşme adresi
+                const contractAddress = '0x5a11C289C1Db26F16956BC2Ea5C229adae813645'; // Sözleşme adresiniz
 
-        try {
-            // MetaMask üzerinden işlemi gönder
-            const txHash = await ethereum.request({
-                method: 'eth_sendTransaction',
-                params: [transactionParameters],
-            });
-            console.log('Transaction Hash:', txHash);
-            alert('Donation successful! Transaction Hash: ' + txHash);
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Donation failed: ' + error.message);
-        }
-    } else {
-        alert('Please install MetaMask!');
-    }
-});
+                // İşlem parametreleri
+                const transactionParameters = {
+                    to: contractAddress, // Sözleşme adresi
+                    from: userAddress, // Kullanıcının adresi
+                    value: amountInWei.toHexString(), // Gönderilecek tutar (wei cinsinden)
+                };
+
+                try {
+                    // MetaMask üzerinden işlemi gönder
+                    const txHash = await ethereum.request({
+                        method: 'eth_sendTransaction',
+                        params: [transactionParameters],
+                    });
+                    console.log('Transaction Hash:', txHash);
+                    alert('Donation successful! Transaction Hash: ' + txHash);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Donation failed: ' + error.message);
+                }
+            } else {
+                alert('Please install MetaMask!');
+            }
+        });
+    </script>
+</body>
+</html>
